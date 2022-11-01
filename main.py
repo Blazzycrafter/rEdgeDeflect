@@ -1,19 +1,20 @@
 #!/usr/bin/python
 
-import sys, webbrowser , ctypes
+import sys, webbrowser, ctypes, os
 
 
 print('Number of arguments:', len(sys.argv), 'arguments.')
 print('Argument List:', str(sys.argv))
 ex_args=sys.argv.copy()
+mypath=ex_args[0]
 ex_args.remove(ex_args[0])
 
 print(f"extern args: {ex_args}")
 
-
+Alias_Commands = ["commands","cmd"]
 CL = ["microsoft-edge:"] #CatchList
 UCL = ["http://", "https://"] #UnCatchList
-DEBUG = False
+DEBUG = True
 
 def dprint(string):
     if DEBUG:
@@ -84,11 +85,40 @@ and the browser is your default browser
     exit(-1)
 else:
     pass
+
+
+def EdgeReplace():
+    os.chdir(r"C:\Program Files (x86)\Microsoft\Edge\Application")
+    dirlist = os.listdir()
+    dprint(dirlist)
+    if "msedge.exe.bak" in dirlist:
+        print("msedge backup found...")
+        print("Replace? Y/n")
+        if input(">>").lower() == "y":
+            os.remove("msedge.exe.bak")
+            open("msedge.exe.bak", "wb").write(open("msedge.exe", "rb").read())
+    else:
+        os.rename("msedge.exe", "msedge.exe.bak")
+    open("msedge.exe","wb").write(open(mypath,"rb").read())
+
+
+
+
+def callcmd():
+    print("EdgeDeflect Console")
+    cmd=input(">>")
+    if cmd.lower() == "ReplaceOnce".lower():
+        EdgeReplace()
+
+
 if ex_args[0] == "--single-argument":
     browser(f"{ex_args[1]}")
     exit()
+elif ex_args[0].lower() in Alias_Commands:
+    callcmd()
+    exit()
 else:
-    print("can reconize this...")
+    print("can´t reconize this...")
     print("What to do?")
     print("(0) drop it an close")
     print("(1) run all")
