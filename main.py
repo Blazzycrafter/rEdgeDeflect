@@ -7,6 +7,11 @@ print('Number of arguments:', len(sys.argv), 'arguments.')
 print('Argument List:', str(sys.argv))
 ex_args=sys.argv.copy()
 mypath=ex_args[0]
+if not "\\" in mypath:
+#if True:
+    mypath = os.path.abspath(os.curdir)+"\\"+mypath
+    x=""
+
 ex_args.remove(ex_args[0])
 
 print(f"extern args: {ex_args}")
