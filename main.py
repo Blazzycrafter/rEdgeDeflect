@@ -7,6 +7,7 @@ print('Number of arguments:', len(sys.argv), 'arguments.')
 print('Argument List:', str(sys.argv))
 ex_args=sys.argv.copy()
 mypath=ex_args[0]
+
 if not "\\" in mypath:
 #if True:
     mypath = os.path.abspath(os.curdir)+"\\"+mypath
@@ -19,6 +20,17 @@ print(f"extern args: {ex_args}")
 Alias_Commands = ["commands","cmd"]
 CL = ["microsoft-edge:"] #CatchList
 UCL = ["http://", "https://"] #UnCatchList
+
+#git issue #1
+icof = ['--no-startup-window', '--win-session-start'] #InstaCloceOnFound
+
+
+for i in ex_args:
+    for x in icof:
+        if i.lower() == x.lower():
+            exit()
+
+
 DEBUG = True
 
 def dprint(string):
