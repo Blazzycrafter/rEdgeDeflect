@@ -3,13 +3,32 @@
 import sys, webbrowser, ctypes, os
 
 
+##Settings file for Settings
+default_settings = '''
+version = 0.0
+icof = ['--no-startup-window', '--win-session-start'] #InstaCloceOnFound
+Alias_Commands = ["commands","cmd"]
+CL = ["microsoft-edge:"] #CatchList
+UCL = ["http://", "https://"] #UnCatchList
+'''
+try:
+    import settings
+except ImportError:
+    if "settings.py" not in os.listdir():
+        open("settings.py","w").write(default_settings)
+        import settings
+
+Alias_Commands = settings.Alias_Commands.copy()
+CL = settings.CL.copy() #CatchList
+UCL = settings.UCL.copy() #UnCatchList
+
+
 print('Number of arguments:', len(sys.argv), 'arguments.')
 print('Argument List:', str(sys.argv))
 ex_args=sys.argv.copy()
 mypath=ex_args[0]
 
 if not "\\" in mypath:
-#if True:
     mypath = os.path.abspath(os.curdir)+"\\"+mypath
     x=""
 
@@ -17,12 +36,9 @@ ex_args.remove(ex_args[0])
 
 print(f"extern args: {ex_args}")
 
-Alias_Commands = ["commands","cmd"]
-CL = ["microsoft-edge:"] #CatchList
-UCL = ["http://", "https://"] #UnCatchList
 
 #git issue #1
-icof = ['--no-startup-window', '--win-session-start'] #InstaCloceOnFound
+icof = settings.icof.copy() #InstaCloceOnFound
 
 
 for i in ex_args:
@@ -72,6 +88,9 @@ def runsingle(ex_args):
         except IndexError:
             print("not in range...")
 
+
+
+
 if len(ex_args) < 1:
     ctypes.windll.user32.MessageBoxW(0, f"""rEdgeDeflect
 is a tool to replace forced browsers... like EDGE...
@@ -104,6 +123,9 @@ else:
     pass
 
 
+
+
+
 def EdgeReplace():
     os.chdir(r"C:\Program Files (x86)\Microsoft\Edge\Application")
     dirlist = os.listdir()
@@ -121,6 +143,8 @@ def EdgeReplace():
 
 
 
+
+
 def callcmd():
     print("EdgeDeflect Console")
     cmd=input(">>")
@@ -128,22 +152,25 @@ def callcmd():
         EdgeReplace()
 
 
-if ex_args[0] == "--single-argument":
-    browser(f"{ex_args[1]}")
-    exit()
-elif ex_args[0].lower() in Alias_Commands:
-    callcmd()
-    exit()
-else:
-    print("can´t reconize this...")
-    print("What to do?")
-    print("(0) drop it an close")
-    print("(1) run all")
-    print("(2) run 1")
-    cmd= input(">>")
-    if cmd == "1":
-        runall(ex_args)
-    elif cmd == "2":
-        runsingle(ex_args)
-    elif cmd == "0":
-        exit(-1)
+
+
+if __name__ == '__main__':
+    if ex_args[0] == "--single-argument":
+        browser(f"{ex_args[1]}")
+        exit()
+    elif ex_args[0].lower() in Alias_Commands:
+        callcmd()
+        exit()
+    else:
+        print("can´t reconize this...")
+        print("What to do?")
+        print("(0) drop it an close")
+        print("(1) run all")
+        print("(2) run 1")
+        cmd= input(">>")
+        if cmd == "1":
+            runall(ex_args)
+        elif cmd == "2":
+            runsingle(ex_args)
+        elif cmd == "0":
+            exit(-1)
