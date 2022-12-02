@@ -1,26 +1,33 @@
 #!/usr/bin/python
 #
-import sys, webbrowser, ctypes, os
+import sys, webbrowser, ctypes, os, json
 
 
 ##Settings file for Settings
-default_settings = '''
-version = 0.0
-icof = ['--no-startup-window', '--win-session-start'] #InstaCloceOnFound
-Alias_Commands = ["commands","cmd"]
-CL = ["microsoft-edge:"] #CatchList
-UCL = ["http://", "https://"] #UnCatchList
-'''
-try:
-    import settings
-except ImportError:
-    if "settings.py" not in os.listdir():
-        open("settings.py","w").write(default_settings)
-        import settings
+default_settings = '''{
+"settings_version" : "0.0",
+"icof" : ["--no-startup-window", "--win-session-start"],
+"Alias_Commands" : ["commands","cmd"],
+"CL" : ["microsoft-edge:"],
+"UCL" : ["http://", "https://"]
+}'''
 
-Alias_Commands = settings.Alias_Commands.copy()
-CL = settings.CL.copy() #CatchList
-UCL = settings.UCL.copy() #UnCatchList
+
+
+
+try:
+    with open("settings.json", 'r') as f:
+        settings = json.load(f)
+except:
+    if "settings.json" not in os.listdir():
+        open("settings.json","w").write(default_settings)
+        with open("settings.json", 'r') as f:
+            settings = json.load(f)
+
+
+Alias_Commands = settings["Alias_Commands"]
+CL = settings["CL"] #CatchList
+UCL = settings["UCL"] #UnCatchList
 
 
 print('Number of arguments:', len(sys.argv), 'arguments.')
@@ -38,7 +45,7 @@ print(f"extern args: {ex_args}")
 
 
 #git issue #1
-icof = settings.icof.copy() #InstaCloceOnFound
+icof = settings["icof"] #InstaCloceOnFound
 
 
 for i in ex_args:
