@@ -1,0 +1,8 @@
+{
+'settings_version' : '0.0',
+'icof' : ['--no-startup-window', '--win-session-start'],
+'Alias_Commands' : ['commands','cmd'],
+'CL' : ['microsoft-edge:'],
+'UCL' : ['http://', 'https://', 'file:///'],
+'Debug': True
+}
