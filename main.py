@@ -81,27 +81,39 @@ Still in development!
 else:
     pass
 
-def EdgeReplace():
-    '''Makes an backup of edge.'''
-    os.chdir(r'C:\Program Files (x86)\Microsoft\Edge\Application')
-    dirlist = os.listdir()
-    dprint(dirlist)
-    if 'msedge.exe.bak' in dirlist:
-        print('msedge backup found...')
-        print('Replace? Y/n')
-        if input('>>').lower() == 'y':
-            os.remove('msedge.exe.bak')
-            open('msedge.exe.bak', 'wb').write(open('msedge.exe', 'rb').read())
-    else:
-        os.rename('msedge.exe', 'msedge.exe.bak')
-    open('msedge.exe','wb').write(open(mypath,'rb').read())
-
 def callcmd():
     '''Opens the EdgeDeflect console.'''
     print('EdgeDeflect Console')
     cmd=input('>>')
     if cmd.lower() == 'ReplaceOnce'.lower():
-        EdgeReplace()
+        os.chdir(r'C:\Program Files (x86)\Microsoft\Edge\Application')
+        dirlist = os.listdir()
+        dprint(dirlist)
+        if 'msedge.exe.bak' in dirlist:
+            print('msedge backup found...')
+            print('Replace? Y/n')
+            if input('>>').lower() == 'y':
+                os.remove('msedge.exe.bak')
+                open('msedge.exe.bak', 'wb').write(open('msedge.exe', 'rb').read())
+        else:
+            os.rename('msedge.exe', 'msedge.exe.bak')
+        open('msedge.exe','wb').write(open(mypath,'rb').read())
+    if cmd.lower() == 'Help'.lower():
+        print('\033[1m' + 'rEdgeDeflect' + '\033[0m')
+        print('''rEdgeDeflect is a tool to replace forced browsers like Edge.
+
+Usage:
+Execute main.exe.
+
+Compile:
+If you want to compile it yourself, you should use pyinstaller.
+
+1. Install Python from https://python.org/.
+2. Run pip install pyinstaller in your terminal.
+3. Navigate to the folder where main.py is located.
+4. Open your terminal in this folder.
+5. Run pyinstaller --noconfirm --onefile --console main.py in your terminal.
+            ''')
 
 if ex_args[0] == '--single-argument':
     browser(ex_args[1])
