@@ -1,3 +1,6 @@
+# ARCHIVED
+Reason: https://www.ctrl.blog/entry/microsoft-edge-protocol-competition.html
+same reason like edgdeflector: https://github.com/da2x/EdgeDeflector
 # rEdgeDeflect
 rEdgeDeflect is a tool to replace forced browsers like Edge.
 
