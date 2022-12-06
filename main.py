@@ -98,7 +98,7 @@ def callcmd():
         else:
             os.rename('msedge.exe', 'msedge.exe.bak')
         open('msedge.exe','wb').write(open(mypath,'rb').read())
-    if cmd.lower() == 'Help'.lower():
+    elif cmd.lower() == 'Help'.lower():
         print('\033[1m' + 'rEdgeDeflect' + '\033[0m')
         print('''rEdgeDeflect is a tool to replace forced browsers like Edge.
 
@@ -114,6 +114,8 @@ If you want to compile it yourself, you should use pyinstaller.
 4. Open your terminal in this folder.
 5. Run pyinstaller --noconfirm --onefile --console main.py in your terminal.
             ''')
+    elif cmd.lower() == 'Issue':
+        print('To report an issue use https://github.com/Blazzycrafter/rEdgeDeflect/issues.')
 
 if ex_args[0] == '--single-argument':
     browser(ex_args[1])
