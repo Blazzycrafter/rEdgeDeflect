@@ -1,183 +1,149 @@
-#!/usr/bin/python
-#
 import sys, webbrowser, ctypes, os, json
 
+settings = {
+'settings_version' : '0.0',
+'icof' : ['--no-startup-window', '--win-session-start'],
+'Alias_Commands' : ['commands','cmd'],
+'CL' : ['microsoft-edge:'],
+'UCL' : ['http://', 'https://', 'file:///'],
+'Debug': False
+}
 
-##Settings file for Settings
-default_settings = '''{
-"settings_version" : "0.0",
-"icof" : ["--no-startup-window", "--win-session-start"],
-"Alias_Commands" : ["commands","cmd"],
-"CL" : ["microsoft-edge:"],
-"UCL" : ["http://", "https://"]
-}'''
-
-
-
-
-try:
-    with open("settings.json", 'r') as f:
-        settings = json.load(f)
-except:
-    if "settings.json" not in os.listdir():
-        open("settings.json","w").write(default_settings)
-        with open("settings.json", 'r') as f:
-            settings = json.load(f)
-
-
-Alias_Commands = settings["Alias_Commands"]
-CL = settings["CL"] #CatchList
-UCL = settings["UCL"] #UnCatchList
-
+Alias_Commands = settings['Alias_Commands']
+CL = settings['CL'] #CatchList
+UCL = settings['UCL'] #UnCatchList
+icof = settings['icof'] #InstaCloceOnFound (GitHub issue #1)
+DEBUG = settings['Debug']
 
 print('Number of arguments:', len(sys.argv), 'arguments.')
 print('Argument List:', str(sys.argv))
 ex_args=sys.argv.copy()
 mypath=ex_args[0]
 
-if not "\\" in mypath:
-    mypath = os.path.abspath(os.curdir)+"\\"+mypath
-    x=""
+if not '\\' in mypath:
+    mypath = os.path.abspath(os.curdir)+'\\'+mypath
+    x=''
 
 ex_args.remove(ex_args[0])
 
-print(f"extern args: {ex_args}")
+print(f'Extern arguments: {ex_args}')
 
-
-#git issue #1
-icof = settings["icof"] #InstaCloceOnFound
-
-
-for i in ex_args:
-    for x in icof:
-        if i.lower() == x.lower():
+for ex_arg in ex_args:
+    for icofi in icof:
+        if ex_arg.lower() == icofi.lower():
             exit()
 
+def dprint(string: str) -> print:
+    '''Only prints if DEBUG is true.
 
-DEBUG = True
+    Args:
+        string (str): String to print.
 
-def dprint(string):
-    if DEBUG:
+    Returns:
+        print: Prints the string.
+    '''
+    if DEBUG: 
         print(string)
 
-def catch(url:str):
-    for i in UCL:
-        if url.startswith(i):
-            return url
-    for i in CL:
-        if url.startswith(i):
-            dprint(f"before removed prefix: {url}")
-            url = url.removeprefix(i)
-            dprint(f"after removed prefix: {url}")
-            return url
+def browser(url: str) -> webbrowser.open:
+    '''Opens the URL in your default browser.
 
-def browser(url:str): # Override
-    webbrowser.open(catch(url))
+    Args:
+        url (str): URL to open
 
-
-def runall(ex_args):
-    if len(ex_args) >= 1:
-        for i in ex_args:
-            browser(f"{i}")
-    else:
-        pass
-
-
-def runsingle(ex_args):
-    print("wich one?")
-    for i in range(len(ex_args)):
-        print(f"({i}) => {ex_args[i]}")
-    while True:
-        n=input("n>")
-        try:
-            browser(f"{ex_args[int(n)]}")
-            exit()
-        except IndexError:
-            print("not in range...")
-
-
-
+    Returns:
+        webbrowser.open: Opens the URL.
+    '''
+    for CLI in CL:
+        if url.startswith(CLI):
+            dprint(f'Before prefix removal: {url}')
+            url = url.removeprefix(CLI)
+            dprint(f'After prefix removal: {url}')
+    webbrowser.open(url, 2)
 
 if len(ex_args) < 1:
-    ctypes.windll.user32.MessageBoxW(0, f"""rEdgeDeflect
-is a tool to replace forced browsers... like EDGE...
+    ctypes.windll.user32.MessageBoxW(0, f'''
+rEdgeDeflect is a tool to replace forced browsers like Microsoft Edge.
 
 
 Technical Information:
-if the first parameter is --single-argument
-we starts the browser function...
-
-else we ask you what you want to do...
+If the first parameter is --single-argument your default browser will be opened with the url behind --single-argument
+If not, a terminal will open and ask you what to do.
 
 
-BrowserFunction
-if a link starts with one of these:
-{UCL}
+BrowserFunction:
+If a link starts with one of these ({UCL}), your default browser will be opened with the url.
+If the searchbar argument is on of these ({CL}), it will be replaced and yourdefault browser will be opened with the url.
 
-we relay it directly to the browser
-
-
-else if we fount one of these:
-{CL}
-
-we remove it and then relay the url to your browser...
-
-
-and the browser is your default browser
-""", "rEdgeDeflect Information", 0)
+Still in development!
+''', 'rEdgeDeflect Information', 0)
     exit(-1)
 else:
     pass
 
-
-
-
-
-def EdgeReplace():
-    os.chdir(r"C:\Program Files (x86)\Microsoft\Edge\Application")
-    dirlist = os.listdir()
-    dprint(dirlist)
-    if "msedge.exe.bak" in dirlist:
-        print("msedge backup found...")
-        print("Replace? Y/n")
-        if input(">>").lower() == "y":
-            os.remove("msedge.exe.bak")
-            open("msedge.exe.bak", "wb").write(open("msedge.exe", "rb").read())
-    else:
-        os.rename("msedge.exe", "msedge.exe.bak")
-    open("msedge.exe","wb").write(open(mypath,"rb").read())
-
-
-
-
-
-
 def callcmd():
-    print("EdgeDeflect Console")
-    cmd=input(">>")
-    if cmd.lower() == "ReplaceOnce".lower():
-        EdgeReplace()
+    '''Opens the EdgeDeflect console.'''
+    print('EdgeDeflect Console')
+    cmd=input('>>')
+    if cmd.lower() == 'ReplaceOnce'.lower():
+        os.chdir(r'C:\Program Files (x86)\Microsoft\Edge\Application')
+        dirlist = os.listdir()
+        dprint(dirlist)
+        if 'msedge.exe.bak' in dirlist:
+            print('msedge backup found...')
+            print('Replace? Y/n')
+            if input('>>').lower() == 'y':
+                os.remove('msedge.exe.bak')
+                open('msedge.exe.bak', 'wb').write(open('msedge.exe', 'rb').read())
+        else:
+            os.rename('msedge.exe', 'msedge.exe.bak')
+        open('msedge.exe','wb').write(open(mypath,'rb').read())
+    elif cmd.lower() == 'Help'.lower():
+        print('\033[1m' + 'rEdgeDeflect' + '\033[0m')
+        print('''rEdgeDeflect is a tool to replace forced browsers like Edge.
 
+Usage:
+Execute main.exe.
 
+Compile:
+If you want to compile it yourself, you should use pyinstaller.
 
+1. Install Python from https://python.org/.
+2. Run pip install pyinstaller in your terminal.
+3. Navigate to the folder where main.py is located.
+4. Open your terminal in this folder.
+5. Run pyinstaller --noconfirm --onefile --console main.py in your terminal.
+            ''')
+    elif cmd.lower() == 'Issue':
+        print('To report an issue use https://github.com/Blazzycrafter/rEdgeDeflect/issues.')
 
-if __name__ == '__main__':
-    if ex_args[0] == "--single-argument":
-        browser(f"{ex_args[1]}")
-        exit()
-    elif ex_args[0].lower() in Alias_Commands:
-        callcmd()
-        exit()
-    else:
-        print("can´t reconize this...")
-        print("What to do?")
-        print("(0) drop it an close")
-        print("(1) run all")
-        print("(2) run 1")
-        cmd= input(">>")
-        if cmd == "1":
-            runall(ex_args)
-        elif cmd == "2":
-            runsingle(ex_args)
-        elif cmd == "0":
-            exit(-1)
+if ex_args[0] == '--single-argument':
+    browser(ex_args[1])
+    exit()
+elif ex_args[0].lower() in Alias_Commands:
+    callcmd()
+    exit()
+else:
+    print('Can\'t reconize this.')
+    print('What to do?')
+    print('(0) Exit')
+    print('(1) Run all')
+    print('(2) Run single')
+    cmd= input('>>')
+    if cmd == '1':
+        if len(ex_args) >= 1:
+            for ex_arg in ex_args:
+                browser(ex_arg)
+    elif cmd == '2':
+        print('Which one?')
+        for ex_arg_index in range(len(ex_args)):
+            print(f'({ex_arg_index}) => {ex_args[ex_arg_index]}')
+        while True:
+            n=input('n>')
+            try:
+                browser(ex_args[int(n)])
+                exit()
+            except IndexError:
+                print('Not in range.')
+    elif cmd == '0':
+        exit(-1)
