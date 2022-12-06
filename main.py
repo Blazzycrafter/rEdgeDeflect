@@ -1,7 +1,13 @@
 import sys, webbrowser, ctypes, os, json
 
-with open('settings.json', 'r') as f:
-    settings = json.load(f)
+settings = {
+'settings_version' : '0.0',
+'icof' : ['--no-startup-window', '--win-session-start'],
+'Alias_Commands' : ['commands','cmd'],
+'CL' : ['microsoft-edge:'],
+'UCL' : ['http://', 'https://', 'file:///'],
+'Debug': False
+}
 
 Alias_Commands = settings['Alias_Commands']
 CL = settings['CL'] #CatchList
@@ -97,34 +103,33 @@ def callcmd():
     if cmd.lower() == 'ReplaceOnce'.lower():
         EdgeReplace()
 
-if __name__ == '__main__':
-    if ex_args[0] == '--single-argument':
-        browser(ex_args[1])
-        exit()
-    elif ex_args[0].lower() in Alias_Commands:
-        callcmd()
-        exit()
-    else:
-        print('Can\'t reconize this.')
-        print('What to do?')
-        print('(0) Exit')
-        print('(1) Run all')
-        print('(2) Run single')
-        cmd= input('>>')
-        if cmd == '1':
-            if len(ex_args) >= 1:
-                for ex_arg in ex_args:
-                    browser(ex_arg)
-        elif cmd == '2':
-            print('Which one?')
-            for ex_arg_index in range(len(ex_args)):
-                print(f'({ex_arg_index}) => {ex_args[ex_arg_index]}')
-            while True:
-                n=input('n>')
-                try:
-                    browser(ex_args[int(n)])
-                    exit()
-                except IndexError:
-                    print('Not in range.')
-        elif cmd == '0':
-            exit(-1)
+if ex_args[0] == '--single-argument':
+    browser(ex_args[1])
+    exit()
+elif ex_args[0].lower() in Alias_Commands:
+    callcmd()
+    exit()
+else:
+    print('Can\'t reconize this.')
+    print('What to do?')
+    print('(0) Exit')
+    print('(1) Run all')
+    print('(2) Run single')
+    cmd= input('>>')
+    if cmd == '1':
+        if len(ex_args) >= 1:
+            for ex_arg in ex_args:
+                browser(ex_arg)
+    elif cmd == '2':
+        print('Which one?')
+        for ex_arg_index in range(len(ex_args)):
+            print(f'({ex_arg_index}) => {ex_args[ex_arg_index]}')
+        while True:
+            n=input('n>')
+            try:
+                browser(ex_args[int(n)])
+                exit()
+            except IndexError:
+                print('Not in range.')
+    elif cmd == '0':
+        exit(-1)
